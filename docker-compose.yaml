@@ -1,0 +1,12 @@
+version: '3'
+services:
+  mysql:
+    container_name: 'mysql-lets-chat'
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=letschat'
+      - 'MYSQL_PASSWORD=my-secret-pw'
+      - 'MYSQL_ROOT_PASSWORD=my-secret-pw'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3306:3306'
