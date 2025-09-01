@@ -1,4 +1,4 @@
-package com.myreflectionthoughts.auth;
+package com.myreflectionthoughts.auth.exception;
 
 public class AuthException extends RuntimeException{
 

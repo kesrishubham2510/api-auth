@@ -1,6 +1,6 @@
 package com.myreflectionthoughts.auth.dataprovider.service;
 
-import com.myreflectionthoughts.auth.AuthException;
+import com.myreflectionthoughts.auth.exception.AuthException;
 import com.myreflectionthoughts.auth.datamodel.entity.User;
 import com.myreflectionthoughts.auth.datamodel.entity.UserAuth;
 import com.myreflectionthoughts.auth.datamodel.request.LoginModel;
@@ -14,7 +14,6 @@ import com.myreflectionthoughts.auth.usecase.registration.Register;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;

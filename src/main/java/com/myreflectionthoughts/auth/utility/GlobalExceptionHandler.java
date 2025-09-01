@@ -1,6 +1,6 @@
 package com.myreflectionthoughts.auth.utility;
 
-import com.myreflectionthoughts.auth.AuthException;
+import com.myreflectionthoughts.auth.exception.AuthException;
 import com.myreflectionthoughts.auth.datamodel.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
