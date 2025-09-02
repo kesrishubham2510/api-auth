@@ -2,7 +2,9 @@ package com.myreflectionthoughts.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myreflectionthoughts.auth.dataprovider.service.AuthProvider;
+import com.myreflectionthoughts.auth.jwt.JwtAuthenticationProvider;
 import com.myreflectionthoughts.auth.jwt.JwtFilter;
+import com.myreflectionthoughts.auth.jwt.JwtValidator;
 import com.myreflectionthoughts.auth.utility.JwtHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,12 +54,14 @@ public class SecurityConfig {
         */
 
         JwtFilter jwtFilter = new JwtFilter(providerManager(), jwtHandler, objectMapper);
+        JwtValidator jwtValidator = new JwtValidator(jwtHandler, providerManager());
 
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api-auth/login", "/api-auth/register", "/v3/api-docs/**", "/swagger-ui/**",   "/swagger-ui/index.html").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtValidator, JwtFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
@@ -75,9 +79,20 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
     }
 
+    /*
+        --> create a JwtAuthenticationProvider bean
+        --> This bean is responsible for accessing the userDetails from the jwt token
+     */
+
+
+    @Bean
+    public JwtAuthenticationProvider jwtAuthenticationProvider(){
+        return new JwtAuthenticationProvider(jwtHandler, authProvider);
+    }
+
     @Bean
     public ProviderManager providerManager(){
-        return new ProviderManager(List.of(daoAuthenticationProvider()));
+        return new ProviderManager(List.of(daoAuthenticationProvider(),jwtAuthenticationProvider()));
     }
 
 }
