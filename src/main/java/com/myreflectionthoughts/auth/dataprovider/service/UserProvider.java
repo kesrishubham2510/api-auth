@@ -1,5 +1,6 @@
 package com.myreflectionthoughts.auth.dataprovider.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myreflectionthoughts.auth.exception.AuthException;
 import com.myreflectionthoughts.auth.datamodel.entity.User;
 import com.myreflectionthoughts.auth.datamodel.entity.UserAuth;
@@ -12,6 +13,7 @@ import com.myreflectionthoughts.auth.dataprovider.repository.UserRepository;
 import com.myreflectionthoughts.auth.usecase.authentication.Login;
 import com.myreflectionthoughts.auth.usecase.registration.Register;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,10 +25,18 @@ public class UserProvider implements Register, Login {
 
     private final UserRepository userRepository;
     private final AuthProvider authProvider;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private ObjectMapper mapper;
 
-    public UserProvider(UserRepository userRepository, AuthProvider authProvider){
+    public UserProvider(UserRepository userRepository,
+                        AuthProvider authProvider,
+                        BCryptPasswordEncoder passwordEncoder,
+                        ObjectMapper objectMapper)
+    {
         this.userRepository = userRepository;
         this.authProvider  = authProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.mapper = objectMapper;
     }
 
     /*
@@ -77,14 +87,13 @@ public class UserProvider implements Register, Login {
         user.setLastName(model.getLastName());
         user.setUsername(model.getUsername());
         user.setRole(UserRole.USER);
-        user.setPassword(model.getPassword());
+        user.setPassword(passwordEncoder.encode(model.getPassword()));
         user.setJoined(String.valueOf(Instant.now().getEpochSecond()));
         return user;
     }
 
     private RegistrationDTO mapToRegistrationDTO(User user){
-        RegistrationDTO registrationDTO = new RegistrationDTO();
-        return registrationDTO;
+        return mapper.convertValue(user, RegistrationDTO.class);
     }
 
     private LoginDTO mapToLoginDTO(UserAuth userDetails){

@@ -38,4 +38,7 @@ public class User {
     @Column(name = "joined")
     private String joined;
 
+    @Column(name="emailverified")
+    private boolean emailVerified;
+
 }

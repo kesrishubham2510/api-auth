@@ -11,5 +11,5 @@ public class RegistrationDTO {
     private String username;
     private String role;
     private String joined;
-    private String token;
+    private boolean emailVerified;
 }
