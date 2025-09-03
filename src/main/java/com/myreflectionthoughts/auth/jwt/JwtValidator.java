@@ -31,9 +31,14 @@ public class JwtValidator extends OncePerRequestFilter {
 
         if(tokenHeader!=null){
             String token = jwtHandler.extractToken(tokenHeader);
-            JwtAuthenticationToken jwtAuthenticatinToken = new JwtAuthenticationToken(token);
+            JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(token);
 
-            Authentication authResult = authenticationManager.authenticate(jwtAuthenticatinToken);
+            /*
+               --> If I'm unable to reach the refresh-token API because my jwt is already expired,
+                   if the jwt token in expired, FE will drop it from Header and hit /api-auth/refresh-token
+            */
+
+            Authentication authResult = authenticationManager.authenticate(jwtAuthenticationToken);
 
             if(authResult.isAuthenticated()){
                 SecurityContextHolder.getContext().setAuthentication(authResult);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myreflectionthoughts.auth.dataprovider.service.AuthProvider;
 import com.myreflectionthoughts.auth.jwt.JwtAuthenticationProvider;
 import com.myreflectionthoughts.auth.jwt.JwtFilter;
+import com.myreflectionthoughts.auth.jwt.JwtRefreshFilter;
 import com.myreflectionthoughts.auth.jwt.JwtValidator;
 import com.myreflectionthoughts.auth.utility.JwtHandler;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +56,7 @@ public class SecurityConfig {
 
         JwtFilter jwtFilter = new JwtFilter(providerManager(), jwtHandler, objectMapper);
         JwtValidator jwtValidator = new JwtValidator(jwtHandler, providerManager());
+        JwtRefreshFilter jwtRefreshFilter = new JwtRefreshFilter(jwtHandler, providerManager());
 
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
@@ -62,6 +64,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtValidator, JwtFilter.class)
+                .addFilterAfter(jwtRefreshFilter, JwtValidator.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

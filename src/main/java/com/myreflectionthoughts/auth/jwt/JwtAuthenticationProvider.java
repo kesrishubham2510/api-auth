@@ -32,7 +32,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         UserAuth userauth = (UserAuth) authProvider.loadUserByUsername(username);
 
-        return new UsernamePasswordAuthenticationToken(userauth.getUsername(), "", userauth.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userauth, "", userauth.getAuthorities());
     }
 
     @Override

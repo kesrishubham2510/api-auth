@@ -4,6 +4,8 @@ import com.myreflectionthoughts.auth.datamodel.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -13,16 +15,17 @@ import java.util.Date;
 @Component
 public class JwtHandler {
 
-    private final int expiryMinutes = 10;
+    private final int jwtTokenExpiryMinutes = 1;
+    private final int refreshTokenExpiryDays = 7;
     private final String keyString = "f8c1a74d5e2b4b6c9120e34f8a7c1b2d93f66d4c9ab27fe10a8b3e29dff82a1c";
     private final Key key = Keys.hmacShaKeyFor(keyString.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(User user){
+    private String generateToken(User user, int expiryDuration){
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("role", user.getRole())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + (expiryMinutes*60*1000)))
+                .expiration(new Date(System.currentTimeMillis() + expiryDuration))
                 .signWith(key)
                 .compact();
     }
@@ -48,5 +51,25 @@ public class JwtHandler {
             .build()
             .parseClaimsJws(token)
             .getPayload();
+    }
+
+    public String retrieveRefreshTokenCookie(HttpServletRequest request){
+
+        Cookie[] cookies = request.getCookies();
+
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("refreshToken")){
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    public String generateJwtToken(User user){
+        return generateToken(user, jwtTokenExpiryMinutes *60*1000);
+    }
+
+    public String generateRefreshToken(User user){
+        return generateToken(user, refreshTokenExpiryDays*24*7*60*1000);
     }
 }
