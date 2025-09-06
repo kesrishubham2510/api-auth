@@ -5,9 +5,12 @@ import com.myreflectionthoughts.auth.dataprovider.service.AuthProvider;
 import com.myreflectionthoughts.auth.utility.JwtHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+
+import java.util.Objects;
 
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
@@ -31,6 +34,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         }
 
         UserAuth userauth = (UserAuth) authProvider.loadUserByUsername(username);
+
+        if(Objects.isNull(userauth)){
+            throw new InternalAuthenticationServiceException(
+                    "UserDetailsService returned null, which is an interface contract violation");
+        }
 
         return new UsernamePasswordAuthenticationToken(userauth, "", userauth.getAuthorities());
     }

@@ -1,22 +1,24 @@
 package com.myreflectionthoughts.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myreflectionthoughts.auth.config.RestConstant;
 import com.myreflectionthoughts.auth.datamodel.entity.User;
 import com.myreflectionthoughts.auth.datamodel.entity.UserAuth;
 import com.myreflectionthoughts.auth.datamodel.request.LoginModel;
+import com.myreflectionthoughts.auth.utility.AppUtil;
 import com.myreflectionthoughts.auth.utility.JwtHandler;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -55,19 +57,43 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginModel.getUsername(), loginModel.getPassword());
 
-            Authentication auth = authenticationManager.authenticate(authenticationToken);
+            try{
+                Authentication auth = authenticationManager.authenticate(authenticationToken);
 
-            if(auth.isAuthenticated()){
+                if(auth.isAuthenticated()){
 
-                UserAuth userAuth = (UserAuth) auth.getPrincipal();
-                String token = "Bearer " + jwtHandler.generateJwtToken(userAuth.getUser());
-                response.setHeader("Authorization", token);
-                response.setStatus(HttpStatus.CREATED.value());
+                    UserAuth userAuth = (UserAuth) auth.getPrincipal();
+                    String token = "Bearer " + jwtHandler.generateJwtToken(userAuth.getUser());
+                    response.setHeader("Authorization", token);
+                    response.setStatus(HttpStatus.CREATED.value());
 
-                generateAndSetRefreshToken(response, userAuth.getUser());
+                    generateAndSetRefreshToken(response, userAuth.getUser());
 
+                    String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                    body  = body.replace("${message}", "JWT token is generated & set in response, please check for `Authorization` header in response");
+
+                    response.getWriter().write(body);
+
+                    return;
+                }
+
+            }catch (JwtException jwtException){
+
+                String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
+                content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
+
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.getWriter().write(content);
+                return;
+            } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
+                String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${message}", "User does not exist, please check credentials");
+
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.getWriter().write(content);
                 return;
             }
+
         }
 
         filterChain.doFilter(request, response);
