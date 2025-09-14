@@ -82,14 +82,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(content);
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(content);
                 return;
             }

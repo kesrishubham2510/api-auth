@@ -41,7 +41,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             String refreshToken = jwtHandler.retrieveRefreshTokenCookie(request);
 
             if(refreshToken==null){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return;
             }
 
@@ -58,6 +58,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                     String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
                     body  = body.replace("${message}", "JWT token is generated & set in response, please check for `Authorization` header in response");
 
+                    response.setStatus(HttpStatus.OK.value());
                     response.getWriter().write(body);
                     return;
                 }
@@ -66,7 +67,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(content);
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
@@ -74,7 +75,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(content);
                 return;
             }

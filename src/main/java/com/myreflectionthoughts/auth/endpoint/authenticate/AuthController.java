@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The user is registered successfully", headers = {@Header(name = "Content-Type", description = "The format of response", schema = @Schema(type = "string", example = "text/json")), @Header(name = "X-request-Id", description = "The UUID of the request", schema = @Schema(type = "string", example = "2323432432432"))}, content = @Content(schema = @Schema(implementation = RegistrationDTO.class))),
+            @ApiResponse(responseCode = "201", description = "The user is registered successfully", headers = {@Header(name = "Content-Type", description = "The format of response", schema = @Schema(type = "string", example = "text/json")), @Header(name = "X-request-Id", description = "The UUID of the request", schema = @Schema(type = "string", example = "2323432432432"))}, content = @Content(schema = @Schema(implementation = RegistrationDTO.class))),
             @ApiResponse(responseCode = "400", description = "The user input is not acceptable, refer response for more details", headers = {@Header(name = "Content-Type", description = "The format of response", schema = @Schema(type = "string", example = "text/json")), @Header(name = "X-request-Id", description = "The UUID of the request", schema = @Schema(type = "string", example = "2323432432432"))}, content = @Content(schema = @Schema(implementation = ErrorResponse.class)))}
     )
     @PostMapping(RestConstant.REGISTER_PATH)
