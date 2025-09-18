@@ -14,12 +14,10 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-//@Component
 public class JwtValidator extends OncePerRequestFilter {
 
     private final JwtHandler jwtHandler;
@@ -34,13 +32,9 @@ public class JwtValidator extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String tokenHeader = request.getHeader("Authorization");
-        String requestURI = request.getRequestURI();
 
         // need to bypass authorization header validation for login, signup and refresh
-        if(requestURI.equals("/api-auth/refresh-token") || requestURI.equals("/api-auth/register") || requestURI.equals("/api-auth/login") ){
-            filterChain.doFilter(request, response);
-            return;
-        }else if(StringUtils.isEmpty(tokenHeader)){
+        if(StringUtils.isEmpty(tokenHeader)){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
             body  = body.replace("${message}", "Authorization header is required");
@@ -78,4 +72,18 @@ public class JwtValidator extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    /*
+      skip this filter and go to next one for the below servlet paths
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/api-auth/login")
+                || path.startsWith("/api-auth/register")
+                || path.startsWith("/api-auth/refresh-token")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui");
+    }
+
 }
