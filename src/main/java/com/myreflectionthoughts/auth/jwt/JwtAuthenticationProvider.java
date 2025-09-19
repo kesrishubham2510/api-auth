@@ -35,11 +35,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         UserAuth userauth = (UserAuth) authProvider.loadUserByUsername(username);
 
-        if(Objects.isNull(userauth)){
-            throw new InternalAuthenticationServiceException(
-                    "UserDetailsService returned null, which is an interface contract violation");
-        }
-
         return new UsernamePasswordAuthenticationToken(userauth, "", userauth.getAuthorities());
     }
 

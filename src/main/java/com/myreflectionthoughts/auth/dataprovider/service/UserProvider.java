@@ -62,16 +62,12 @@ public class UserProvider implements Register, Login {
     public LoginDTO loginUser(LoginModel loginModel) {
         UserDetails userDetails = authProvider.loadUserByUsername(loginModel.getUsername());
 
-        if(Objects.isNull(userDetails)){
-            System.out.println("No user found");
-        }else{
+        if(loginModel.getPassword().equals(userDetails.getPassword())){
             // match password and help with login
-            if(loginModel.getPassword().equals(userDetails.getPassword())){
-                return mapToLoginDTO((UserAuth) userDetails);
-            }
-
+            return mapToLoginDTO((UserAuth) userDetails);
         }
-        return null;
+
+        throw new AuthException("Username/password combination is wrong, please check and try again");
     }
 
 

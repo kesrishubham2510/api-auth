@@ -3,6 +3,7 @@ package com.myreflectionthoughts.auth.dataprovider.service;
 import com.myreflectionthoughts.auth.datamodel.entity.User;
 import com.myreflectionthoughts.auth.datamodel.entity.UserAuth;
 import com.myreflectionthoughts.auth.dataprovider.repository.UserRepository;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +36,11 @@ public class AuthProvider implements UserDetailsService {
             userDetails = new UserAuth(existingUserByEmail);
         }else if(!Objects.isNull(existingUserByUsername)) {
             userDetails = new UserAuth(existingUserByUsername);
+        }
+
+        if(Objects.isNull(userDetails)){
+            throw new InternalAuthenticationServiceException(
+                    "No User Found for the entered username/email and password combination");
         }
 
         return userDetails;
