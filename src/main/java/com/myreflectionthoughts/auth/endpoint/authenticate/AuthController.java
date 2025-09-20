@@ -44,6 +44,6 @@ public class AuthController {
     )
     @PostMapping(RestConstant.LOGIN_PATH)
     public ResponseEntity<LoginDTO> loginUser(@RequestBody LoginModel loginModel){
-        return ResponseEntity.ok().body(userProvider.loginUser(loginModel));
+        return ResponseEntity.ok().body(null);
     }
 }

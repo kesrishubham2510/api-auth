@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class UserProvider implements Register, Login {
+public class UserProvider implements Register {
 
     private final UserRepository userRepository;
     private final AuthProvider authProvider;
@@ -57,25 +57,6 @@ public class UserProvider implements Register, Login {
         }
     }
 
-    // first check for the user-password combination
-    @Override
-    public LoginDTO loginUser(LoginModel loginModel) {
-        UserDetails userDetails = authProvider.loadUserByUsername(loginModel.getUsername());
-
-        if(loginModel.getPassword().equals(this.passwordEncoder.encode(userDetails.getPassword()))){
-            // match password and help with login
-            return mapToLoginDTO((UserAuth) userDetails);
-        }
-
-        throw new AuthException("Username/password combination is wrong, please check and try again");
-    }
-
-
-    public User fetchMyUser(String username){
-        Optional<User> optionalUser = Optional.of(userRepository.findByUsername(username));
-        return optionalUser.orElseThrow(()-> new RuntimeException("User:- "+username+" does not exists"));
-    }
-
     private User mapToUser(RegistrationModel model){
         User user = new User();
         user.setEmail(model.getEmail());
@@ -90,20 +71,5 @@ public class UserProvider implements Register, Login {
 
     private RegistrationDTO mapToRegistrationDTO(User user){
         return mapper.convertValue(user, RegistrationDTO.class);
-    }
-
-    private LoginDTO mapToLoginDTO(UserAuth userDetails){
-        LoginDTO loginDTO = new LoginDTO();
-
-        loginDTO.setUserId(userDetails.getUserId());
-        loginDTO.setEmail(userDetails.getUser().getEmail());
-        loginDTO.setFirstName(userDetails.getUser().getFirstName());
-        loginDTO.setLastName(userDetails.getUser().getLastName());
-        loginDTO.setUsername(userDetails.getUsername());
-        loginDTO.setJoined(userDetails.getUser().getJoined());
-        loginDTO.setRole(userDetails.getUser().getRole().name());
-        loginDTO.setToken("token");
-
-        return loginDTO;
     }
 }

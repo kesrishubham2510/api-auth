@@ -5,6 +5,7 @@ import com.myreflectionthoughts.auth.config.RestConstant;
 import com.myreflectionthoughts.auth.datamodel.entity.User;
 import com.myreflectionthoughts.auth.datamodel.entity.UserAuth;
 import com.myreflectionthoughts.auth.datamodel.request.LoginModel;
+import com.myreflectionthoughts.auth.datamodel.response.LoginDTO;
 import com.myreflectionthoughts.auth.utility.AppUtil;
 import com.myreflectionthoughts.auth.utility.JwtHandler;
 import io.jsonwebtoken.JwtException;
@@ -71,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     generateAndSetRefreshToken(response, userAuth.getUser());
 
                     String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
-                    body  = body.replace("${message}", "JWT token is generated & set in response, please check for `Authorization` header in response");
+                    body  = objectMapper.writeValueAsString(mapToLoginDTO(userAuth));
 
                     response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
                     response.setContentType("application/json");
@@ -117,6 +118,20 @@ public class JwtFilter extends OncePerRequestFilter {
         refreshCookie.setMaxAge(24*7*60*60); // 7 days
         refreshCookie.setSecure(httpsEnabled);
         response.addCookie(refreshCookie);
+    }
 
+    private LoginDTO mapToLoginDTO(UserAuth userDetails){
+        LoginDTO loginDTO = new LoginDTO();
+
+        loginDTO.setUserId(userDetails.getUserId());
+        loginDTO.setEmail(userDetails.getUser().getEmail());
+        loginDTO.setFirstName(userDetails.getUser().getFirstName());
+        loginDTO.setLastName(userDetails.getUser().getLastName());
+        loginDTO.setUsername(userDetails.getUsername());
+        loginDTO.setJoined(userDetails.getUser().getJoined());
+        loginDTO.setRole(userDetails.getUser().getRole().name());
+        loginDTO.setToken("token");
+
+        return loginDTO;
     }
 }
