@@ -42,7 +42,14 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             String refreshToken = jwtHandler.retrieveRefreshTokenCookie(request);
 
             if(refreshToken==null){
+                String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                body  = body.replace("${message}", "Expected cookies are missing in request, please login again !");
+
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
+                response.getWriter().write(body);
+
                 return;
             }
 

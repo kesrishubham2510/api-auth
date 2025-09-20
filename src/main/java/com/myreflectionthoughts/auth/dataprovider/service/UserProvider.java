@@ -24,17 +24,14 @@ import java.util.Optional;
 public class UserProvider implements Register {
 
     private final UserRepository userRepository;
-    private final AuthProvider authProvider;
     private final BCryptPasswordEncoder passwordEncoder;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public UserProvider(UserRepository userRepository,
-                        AuthProvider authProvider,
                         BCryptPasswordEncoder passwordEncoder,
                         ObjectMapper objectMapper)
     {
         this.userRepository = userRepository;
-        this.authProvider  = authProvider;
         this.passwordEncoder = passwordEncoder;
         this.mapper = objectMapper;
     }
