@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class JwtValidator extends OncePerRequestFilter {
 
@@ -38,6 +39,8 @@ public class JwtValidator extends OncePerRequestFilter {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
             body  = body.replace("${message}", "Authorization header is required");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+            response.setContentType("application/json");
             response.getWriter().write(body);
             return;
         }else{
@@ -57,6 +60,8 @@ public class JwtValidator extends OncePerRequestFilter {
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
                 response.getWriter().write(content);
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
@@ -64,6 +69,8 @@ public class JwtValidator extends OncePerRequestFilter {
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
                 response.getWriter().write(content);
                 return;
             }

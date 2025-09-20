@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class JwtRefreshFilter extends OncePerRequestFilter {
 
@@ -59,6 +60,8 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                     body  = body.replace("${message}", "JWT token is generated & set in response, please check for `Authorization` header in response");
 
                     response.setStatus(HttpStatus.OK.value());
+                    response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                    response.setContentType("application/json");
                     response.getWriter().write(body);
                     return;
                 }
@@ -68,6 +71,8 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
                 response.getWriter().write(content);
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
@@ -76,6 +81,8 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
                 response.getWriter().write(content);
                 return;
             }
