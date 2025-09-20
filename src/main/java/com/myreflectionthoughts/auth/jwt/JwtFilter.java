@@ -15,10 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -101,7 +98,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.getWriter().write(content);
 
                 return;
+            }catch (BadCredentialsException badCredentialsException){
+                String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${message}", "Wrong credentials, please check and try again");
+
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+                response.setContentType("application/json");
+                response.getWriter().write(content);
+
+                return;
             }
+
 
         }
 

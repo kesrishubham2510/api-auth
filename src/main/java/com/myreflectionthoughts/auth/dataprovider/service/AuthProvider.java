@@ -40,7 +40,7 @@ public class AuthProvider implements UserDetailsService {
 
         if(Objects.isNull(userDetails)){
             throw new InternalAuthenticationServiceException(
-                    "No User Found for the entered username/email and password combination");
+                    "No User Found for the entered username/email");
         }
 
         return userDetails;
