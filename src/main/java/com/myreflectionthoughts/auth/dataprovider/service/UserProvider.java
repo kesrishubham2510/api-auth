@@ -62,7 +62,7 @@ public class UserProvider implements Register, Login {
     public LoginDTO loginUser(LoginModel loginModel) {
         UserDetails userDetails = authProvider.loadUserByUsername(loginModel.getUsername());
 
-        if(loginModel.getPassword().equals(userDetails.getPassword())){
+        if(loginModel.getPassword().equals(this.passwordEncoder.encode(userDetails.getPassword()))){
             // match password and help with login
             return mapToLoginDTO((UserAuth) userDetails);
         }
