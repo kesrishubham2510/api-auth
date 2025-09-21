@@ -48,9 +48,9 @@ public class UserProvider implements Register {
         if(Objects.isNull(existingUserByEmail) && Objects.isNull(existingUserByUsername)){
             return mapToRegistrationDTO(userRepository.save(mapToUser(registrationModel)));
         }else if(Objects.nonNull(existingUserByEmail)){
-            throw new AuthException("User with email:- "+registrationModel.getEmail()+" already exists");
+            throw new AuthException("EMAIL_ALREADY_TAKEN", "User with email:- "+registrationModel.getEmail()+" already exists");
         }else{
-            throw new AuthException("User with username:- "+registrationModel.getUsername()+" already exists");
+            throw new AuthException("USERNAME_ALREADY_TAKEN", "User with username:- "+registrationModel.getUsername()+" already exists");
         }
     }
 

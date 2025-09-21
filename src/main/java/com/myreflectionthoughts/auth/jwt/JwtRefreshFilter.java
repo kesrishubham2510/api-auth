@@ -43,6 +43,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
 
             if(refreshToken==null){
                 String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                body = body.replace("${key}", "COOKIE_MISSING");
                 body  = body.replace("${message}", "Expected cookies are missing in request, please login again !");
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -64,6 +65,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                     response.setHeader("Authorization", newToken);
 
                     String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                    body = body.replace("${key}", "TOKEN_RENEWED");
                     body  = body.replace("${message}", "JWT token is generated & set in response, please check for `Authorization` header in response");
 
                     response.setStatus(HttpStatus.OK.value());
@@ -75,6 +77,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
 
             }catch (JwtException jwtException){
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
+                content = content.replace("${key}", "COOKIE_EXPIRED");
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -85,6 +88,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
 
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${key}", "INVALID_COOKIE");
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());

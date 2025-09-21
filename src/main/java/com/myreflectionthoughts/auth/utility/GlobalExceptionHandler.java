@@ -13,6 +13,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(exception = AuthException.class)
     public ResponseEntity<ErrorResponse> buildExceptionMessage(AuthException authException){
         ErrorResponse response = new ErrorResponse();
+        response.setKey(authException.getKey());
         response.setMessage(authException.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }

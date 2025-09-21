@@ -38,6 +38,7 @@ public class JwtValidator extends OncePerRequestFilter {
         if(StringUtils.isEmpty(tokenHeader)){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+            body = body.replace("${key}", "AUTHORIZATION_MISSING");
             body  = body.replace("${message}", "Authorization header is required");
             response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             response.setContentType("application/json");
@@ -57,6 +58,7 @@ public class JwtValidator extends OncePerRequestFilter {
             }catch (JwtException jwtException){
 
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
+                content = content.replace("${key}", "INVALID_TOKEN");
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -66,6 +68,7 @@ public class JwtValidator extends OncePerRequestFilter {
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${key}", "WRONG_CREDENTIAL");
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
                 response.setStatus(HttpStatus.BAD_REQUEST.value());

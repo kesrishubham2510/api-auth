@@ -68,8 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     generateAndSetRefreshToken(response, userAuth.getUser());
 
-                    String body  = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
-                    body  = objectMapper.writeValueAsString(mapToLoginDTO(userAuth));
+                    String body  =  objectMapper.writeValueAsString(mapToLoginDTO(userAuth));
 
                     response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
                     response.setContentType("application/json");
@@ -81,6 +80,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }catch (JwtException jwtException){
 
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
+                content = content.replace("${key}", "INVALID_TOKEN");
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -90,6 +90,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             } catch (InternalAuthenticationServiceException internalAuthenticationServiceException){
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${key}", "INVALID_IDENTITY");
                 content = content.replace("${message}", "User does not exist, please check credentials");
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -100,6 +101,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }catch (BadCredentialsException badCredentialsException){
                 String content = AppUtil.loadMessageBody(RestConstant.MESSAGE_TEMPLATE);
+                content = content.replace("${key}", "WRONG_CREDENTIAL");
                 content = content.replace("${message}", "Wrong credentials, please check and try again");
 
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
