@@ -79,6 +79,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 String content = AppUtil.loadMessageBody(RestConstant.FILENAME_JWT_TOKEN_ERROR);
                 content = content.replace("${key}", "COOKIE_EXPIRED");
                 content = content.replace("${message}", AppUtil.handleMessage(jwtException.getMessage()));
+                content = content.replace("${nextStep}", "Please Login again !");
 
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
