@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 public class JwtHandler {
 
-    private final int jwtTokenExpiryMinutes = 1;
+    private final int jwtTokenExpiryMinutes = 5;
     private final int refreshTokenExpiryDays = 7;
     private final String keyString = "f8c1a74d5e2b4b6c9120e34f8a7c1b2d93f66d4c9ab27fe10a8b3e29dff82a1c";
     private final Key key = Keys.hmacShaKeyFor(keyString.getBytes(StandardCharsets.UTF_8));
@@ -66,10 +66,10 @@ public class JwtHandler {
     }
 
     public String generateJwtToken(User user){
-        return generateToken(user, jwtTokenExpiryMinutes *60*1000);
+        return generateToken(user, jwtTokenExpiryMinutes*60*1000);
     }
 
     public String generateRefreshToken(User user){
-        return generateToken(user, refreshTokenExpiryDays*24*7*60*1000);
+        return generateToken(user, refreshTokenExpiryDays*24*60*60*1000);
     }
 }
