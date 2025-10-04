@@ -15,7 +15,7 @@ public class Post {
 
     @Id
     @UuidGenerator
-    @Column(name = "postid")
+    @Column(name = "post_id")
     private String postId;
 
     @Column(name = "content")
@@ -29,9 +29,9 @@ public class Post {
 //    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 //    private List<Comment> comments;
 
-    @Column(name = "postedAt")
+    @Column(name = "posted_at")
     private String postedAt;
 
-    @Column(name = "postedBy")
+    @Column(name = "posted_by")
     private String postedBy;
 }

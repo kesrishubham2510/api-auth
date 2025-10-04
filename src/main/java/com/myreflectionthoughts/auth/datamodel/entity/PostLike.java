@@ -9,19 +9,19 @@ import org.hibernate.annotations.UuidGenerator;
 @Table( name = "post_like",
         schema = "letschat",
         indexes = {
-            @Index(name="idx_post_id", columnList = "postid")
+            @Index(name="idx_post_id", columnList = "post_id")
         }
 )
 public class PostLike {
 
     @Id
     @UuidGenerator
-    @Column(name="likeid")
+    @Column(name="like_id")
     private String likeId;
-    @Column(name="userid")
+    @Column(name="user_id")
     private String userId;
-    @Column(name="postid")
+    @Column(name="post_id")
     private String postId;
-    @Column(name = "likedat")
+    @Column(name = "liked_at")
     private String likedAt;
 }

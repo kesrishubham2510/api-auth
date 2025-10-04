@@ -10,21 +10,21 @@ import org.hibernate.annotations.UuidGenerator;
 @Table( name = "post_like",
         schema = "letschat",
         indexes = {
-                @Index(name="idx_comment_id", columnList = "commentid")
+                @Index(name="idx_comment_id", columnList = "comment_id")
         }
 )
 public class CommentLike {
     @Id
     @UuidGenerator
-    @Column(name="likeid")
+    @Column(name="like_id")
     private String likeId;
 
-    @Column(name="userid")
+    @Column(name="user_id")
     private String userId;
 
-    @Column(name="commentid")
+    @Column(name="comment_id")
     private String commentId;
 
-    @Column(name = "likedat")
+    @Column(name = "liked_at")
     private String likedAt;
 }
