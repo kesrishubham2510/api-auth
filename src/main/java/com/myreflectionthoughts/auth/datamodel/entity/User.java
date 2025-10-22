@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name="users", schema = "letschat",
         indexes = {
                 @Index(name="idx_users_email", columnList = "email", unique = true),
-                @Index(name="idx_users_username", columnList = "username", unique = true)
+                @Index(name="idx_users_username", columnList = "user_name", unique = true)
         }
 )
 @JsonIdentityInfo(
@@ -54,8 +54,5 @@ public class User {
 
     @Column(name="emailverified")
     private boolean emailVerified;
-
-    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.REFRESH, mappedBy = "users")
-    private List<DiscussionGroup> discussionGroups;
 }
 
