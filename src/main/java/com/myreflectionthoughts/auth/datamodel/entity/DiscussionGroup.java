@@ -1,5 +1,7 @@
 package com.myreflectionthoughts.auth.datamodel.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
@@ -11,8 +13,12 @@ import java.util.List;
 @Table(
         name = "discussion_groups",
         indexes = {
-                @Index(name="idx_group_id", columnList = "group_id", unique = true),
+                @Index(name="idx_group_id", columnList = "group_id", unique = true)
         }
+)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "groupId"
 )
 public class DiscussionGroup {
 
@@ -24,12 +30,11 @@ public class DiscussionGroup {
     @Column(name = "group_name")
     private String groupName;
 
-//    @JoinColumn(name = "group_id_fk", referencedColumnName = "group_id")
-//    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-//    private List<User> users;
+    @ManyToMany(mappedBy = "discussionGroups")
+    private List<User> users;
 
-//    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-//    private List<Post> posts;
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy="discussionGroup")
+    private List<Post> posts;
 
     @Column(name = "created_at")
     private String createdAt;

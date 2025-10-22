@@ -1,34 +1,42 @@
 package com.myreflectionthoughts.auth.datamodel.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.myreflectionthoughts.auth.datamodel.role.UserRole;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
+
 
 @Data
 @Entity(name="users")
-@Table(name="users",
-    indexes = {
-        @Index(name="idx_users_email", columnList = "email", unique = true),
-        @Index(name="idx_users_username", columnList = "username", unique = true)
-    }
+@Table(name="users", schema = "letschat",
+        indexes = {
+                @Index(name="idx_users_email", columnList = "email", unique = true),
+                @Index(name="idx_users_username", columnList = "username", unique = true)
+        }
+)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "userId"
 )
 public class User {
 
     @Id
     @UuidGenerator
-    @Column(name = "userid")
+    @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "firstname")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name="username")
+    @Column(name="user_name")
     private String username;
 
     @Column(name="email")
@@ -46,4 +54,13 @@ public class User {
 
     @Column(name="emailverified")
     private boolean emailVerified;
+
+    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.REFRESH)
+    @JoinTable(
+            name = "user_group_membership",
+            joinColumns = @JoinColumn(name = "user_id_fk",  referencedColumnName = "user_id"), // key for the user in the membership table
+            inverseJoinColumns = @JoinColumn(name = "group_id_fk",  referencedColumnName = "group_id")
+    )
+    private List<DiscussionGroup> discussionGroups;
 }
+

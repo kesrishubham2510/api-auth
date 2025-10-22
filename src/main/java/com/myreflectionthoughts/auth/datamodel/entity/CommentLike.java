@@ -7,12 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 @Data
 @Entity
-@Table( name = "post_like",
-        schema = "letschat",
-        indexes = {
-                @Index(name="idx_comment_id", columnList = "comment_id")
-        }
-)
+@Table( name = "comment_like", schema = "letschat")
 public class CommentLike {
     @Id
     @UuidGenerator
@@ -21,9 +16,6 @@ public class CommentLike {
 
     @Column(name="user_id")
     private String userId;
-
-    @Column(name="comment_id")
-    private String commentId;
 
     @Column(name = "liked_at")
     private String likedAt;

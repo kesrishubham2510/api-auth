@@ -1,9 +1,6 @@
 package com.myreflectionthoughts.auth.datamodel.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -11,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", schema = "letschat")
 public class Comment {
 
     @Id
@@ -27,4 +24,8 @@ public class Comment {
 
     @Column(name="commented_at")
     private String commentedAt;
+
+    @OneToMany(cascade =  CascadeType.REFRESH)
+    @JoinColumn(name = "comment_id_fk")
+    private List<CommentLike> likes;
 }
