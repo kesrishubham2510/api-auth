@@ -55,12 +55,7 @@ public class User {
     @Column(name="emailverified")
     private boolean emailVerified;
 
-    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.REFRESH)
-    @JoinTable(
-            name = "user_group_membership",
-            joinColumns = @JoinColumn(name = "user_id_fk",  referencedColumnName = "user_id"), // key for the user in the membership table
-            inverseJoinColumns = @JoinColumn(name = "group_id_fk",  referencedColumnName = "group_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY,  cascade = CascadeType.REFRESH, mappedBy = "users")
     private List<DiscussionGroup> discussionGroups;
 }
 

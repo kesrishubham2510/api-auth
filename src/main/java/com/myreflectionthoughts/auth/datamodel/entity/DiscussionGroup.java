@@ -30,8 +30,12 @@ public class DiscussionGroup {
     @Column(name = "group_name")
     private String groupName;
 
-    @ManyToMany(mappedBy = "discussionGroups")
-    private List<User> users;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_group_membership",
+            joinColumns = @JoinColumn(name = "group_id_fk", referencedColumnName = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id_fk", referencedColumnName = "user_id")
+    )
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy="discussionGroup")
     private List<Post> posts;
